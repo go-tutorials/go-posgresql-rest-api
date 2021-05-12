@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
-	"net/http"
-
 	"github.com/gorilla/mux"
+	"net/http"
 
 	. "go-service/internal/models"
 	. "go-service/internal/services"
@@ -106,4 +105,13 @@ func respond(w http.ResponseWriter, result interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(response)
+}
+
+type malformedRequest struct {
+	status int
+	msg    string
+}
+
+func (mr *malformedRequest) Error() string {
+	return mr.msg
 }

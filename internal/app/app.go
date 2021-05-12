@@ -3,14 +3,23 @@ package app
 import (
 	"context"
 	"database/sql"
-	"fmt"
-
 	"github.com/core-go/health"
-	s "github.com/core-go/health/sql"
-	_ "github.com/go-sql-driver/mysql"
+	s "github.com/core-go/health"
+	_ "github.com/lib/pq"
 
 	"go-service/internal/handlers"
 	"go-service/internal/services"
+)
+
+const (
+	CreateDatabase =`CREATE if not exists DATABASE mydb
+WITH
+OWNER = postgres
+ENCODING = 'UTF8'
+LC_COLLATE = 'English_United States.1252'
+LC_CTYPE = 'English_United States.1252'
+TABLESPACE = pg_default
+CONNECTION LIMIT = -1`
 )
 
 const (
@@ -21,6 +30,9 @@ create table if not exists users (
   email varchar(120),
   phone varchar(45),
   date_of_birth date,
+  interests varchar[],
+  skills jsonb,
+  settings json,
   primary key (id)
 )`
 )
@@ -36,8 +48,8 @@ func NewApp(context context.Context, conf DatabaseConfig) (*ApplicationContext, 
 		return nil, err
 	}
 
-	stmtCreate := fmt.Sprintf("%s", "create database if not exists masterdata")
-	_, err = db.ExecContext(context, stmtCreate)
+	/*fmt.Sprintf("%s", "create database if not exists mydb")
+	_, err = db.ExecContext(context, CreateDatabase)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +58,7 @@ func NewApp(context context.Context, conf DatabaseConfig) (*ApplicationContext, 
 	_, err = db.ExecContext(context, stmtUseDB)
 	if err != nil {
 		return nil, err
-	}
+	}*/
 
 	_, err = db.ExecContext(context, CreateTable)
 	if err != nil {
@@ -56,8 +68,10 @@ func NewApp(context context.Context, conf DatabaseConfig) (*ApplicationContext, 
 	userService := services.NewUserService(db)
 	userHandler := handlers.NewUserHandler(userService)
 
-	sqlChecker := s.NewHealthChecker(db)
-	healthHandler := health.NewHealthHandler(sqlChecker)
+	sqlChecker := s.NewSqlHealthChecker(db)
+	var checkers []health.HealthChecker
+	checkers = []health.HealthChecker{sqlChecker}
+	healthHandler := health.NewHealthHandler(checkers)
 
 	return &ApplicationContext{
 		HealthHandler: healthHandler,

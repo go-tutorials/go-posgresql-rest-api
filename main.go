@@ -36,7 +36,7 @@ func main() {
 		panic(er2)
 	}
 	fmt.Println("Start server")
-	server := ""
+	server := "8080"
 	if conf.Server.Port > 0 {
 		server = ":" + strconv.Itoa(conf.Server.Port)
 	}

@@ -11,7 +11,7 @@ import (
 type User struct {
 	Id          string        `json:"id" gorm:"column:id;primary_key" bson:"_id" dynamodbav:"id,omitempty" firestore:"id,omitempty" validate:"required,max=40"`
 	Username    string        `json:"username,omitempty" gorm:"column:username" bson:"username,omitempty" dynamodbav:"username,omitempty" firestore:"username,omitempty" validate:"required,username,max=100"`
-	Email       string        `json:"email2,omitempty" gorm:"column:email" bson:"email3,omitempty" dynamodbav:"email,omitempty" firestore:"email,omitempty" validate:"email,max=100"`
+	Email       string        `json:"email,omitempty" gorm:"column:email" bson:"email3,omitempty" dynamodbav:"email,omitempty" firestore:"email,omitempty" validate:"email,max=100"`
 	Phone       string        `json:"phone,omitempty" gorm:"column:phone" bson:"phone,omitempty" dynamodbav:"phone,omitempty" firestore:"required,phone,omitempty" validate:"required,phone,max=18"`
 	DateOfBirth *time.Time    `json:"dateOfBirth,omitempty" gorm:"column:date_of_birth" bson:"dateOfBirth,omitempty" dynamodbav:"dateOfBirth,omitempty" firestore:"dateOfBirth,omitempty"`
 	Interests   []string      `json:"interests,omitempty" gorm:"-" bson:"interests,omitempty" firestore:"interests" mar:"InterestsB"`
@@ -20,7 +20,7 @@ type User struct {
 }
 
 type UserSettings struct {
-	UserId         string `bson:"_id" json:"-"`
+	UserId         string `bson:"userid" json:"userid"`
 	Language       string `bson:"language" json:"language"`
 	DateFormat     string `bson:"dateFormat" json:"dateFormat"`
 	DateTimeFormat string `bson:"dateTimeFormat" json:"dateTimeFormat"`
@@ -42,6 +42,7 @@ func (o Skills) Value() (driver.Value, error) {
 
 func (o *Skills) Scan(input interface{}) error {
 	bytes, ok := input.([]byte)
+	fmt.Println("This is in scan progress")
 	if !ok {
 		return errors.New(fmt.Sprint("Failed to unmarshal JSONB value:", input))
 	}

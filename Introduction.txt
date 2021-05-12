@@ -1,0 +1,55 @@
+Sample data to insert via postman:
+{
+  "Id": "001",
+  "Username": "Radhika",
+  "Password": "12345678",
+  "Email": "radhika_sharma.123@gmail.com",
+  "Phone": "0900012345",
+  "DateOfBirth": "1974-11-16T16:59:59.999Z",
+  "Interests": [
+    "Play game",
+    "Foot ball",
+    "Basket ball"
+  ],
+   "Skills": [
+    {
+      "Skill": "Writing fast",
+      "Hirable": true
+    }
+  ],
+  "Settings": {
+    "UserId": "001",
+    "Language": "English",
+    "DateFormat": "dd/mm/yyyy",
+	"DateTimeFormat" : "dd-mm-yyyy:hh:mm",
+    "TimeFormat": "hh:mm:ss",
+    "Notification": true
+  }
+}
+
+{
+  "Id": "002",
+  "Username" : "Kisiman",
+  "Email" : "bob_kisiman_sky@gmail.com",
+  "Phone" : "0900349845",
+  "DateOfBirth" : "1982-11-14T16:59:59.999Z",
+  "Interests": [
+	"Tennis",
+    "Volley ball",
+    "Basket ball"
+  ],
+  "Skills": [
+    {
+      "Skill": "Writing fast",
+      "Hirable": true
+    }
+  ],
+  "Settings": {
+    "UserId": "002",
+    "Language": "France",
+    "DateFormat": "dd-mm-yyyy",
+	"DateTimeFormat" : "dd-mm-yyyy:hh:mm",
+    "TimeFormat": "hh:mm",
+    "Notification": true
+  }
+}
