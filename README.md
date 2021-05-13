@@ -68,30 +68,30 @@ GET /users/wolverine
 #### *Response:*
 ```json
 {
-  "Id": "001",
-  "Username": "Radhika",
-  "Password": "12345678",
-  "Email": "radhika_sharma.123@gmail.com",
-  "Phone": "0900012345",
-  "DateOfBirth": "1974-11-16T16:59:59.999Z",
-  "Interests": [
+  "id": "001",
+  "username": "Radhika",
+  "password": "12345678",
+  "email": "radhika_sharma.123@gmail.com",
+  "phone": "0900012345",
+  "dateOfBirth": "1974-11-16T16:59:59.999Z",
+  "interests": [
     "Play game",
     "Foot ball",
     "Basket ball"
   ],
-   "Skills": [
+   "skills": [
     {
-      "Skill": "Writing fast",
-      "Hirable": true
+      "skill": "Writing fast",
+      "hirable": true
     }
   ],
-  "Settings": {
-    "UserId": "001",
-    "Language": "English",
-    "DateFormat": "dd/mm/yyyy",
-	"DateTimeFormat" : "dd-mm-yyyy:hh:mm",
-    "TimeFormat": "hh:mm:ss",
-    "Notification": true
+  "settings": {
+    "userId": "001",
+    "language": "English",
+    "dateformat": "dd/mm/yyyy",
+    "datetimeformat" : "dd-mm-yyyy:hh:mm",
+    "timeformat": "hh:mm:ss",
+    "notification": true
   }
 }
 ```
@@ -100,57 +100,57 @@ GET /users/wolverine
 #### *Request:* POST /users 
 ```json
 {
-  "Id": "001",
-  "Username": "Radhika",
-  "Password": "12345678",
-  "Email": "radhika_sharma.123@gmail.com",
-  "Phone": "0900012345",
-  "DateOfBirth": "1974-11-16T16:59:59.999Z",
-  "Interests": [
+  "id": "001",
+  "username": "Radhika",
+  "password": "12345678",
+  "email": "radhika_sharma.123@gmail.com",
+  "phone": "0900012345",
+  "dateOfBirth": "1974-11-16T16:59:59.999Z",
+  "interests": [
     "Play game",
     "Foot ball",
     "Basket ball"
   ],
-   "Skills": [
+   "skills": [
     {
-      "Skill": "Writing fast",
-      "Hirable": true
+      "skill": "Writing fast",
+      "hirable": true
     }
   ],
-  "Settings": {
-    "UserId": "001",
-    "Language": "English",
-    "DateFormat": "dd/mm/yyyy",
-	"DateTimeFormat" : "dd-mm-yyyy:hh:mm",
-    "TimeFormat": "hh:mm:ss",
-    "Notification": true
+  "settings": {
+    "userId": "001",
+    "language": "English",
+    "dateformat": "dd/mm/yyyy",
+    "datetimeformat" : "dd-mm-yyyy:hh:mm",
+    "timeformat": "hh:mm:ss",
+    "notification": true
   }
 }
 
 {
-  "Id": "002",
-  "Username" : "Kisiman",
-  "Email" : "bob_kisiman_sky@gmail.com",
-  "Phone" : "0900349845",
-  "DateOfBirth" : "1982-11-14T16:59:59.999Z",
-  "Interests": [
+  "id": "002",
+  "username" : "Kisiman",
+  "email" : "bob_kisiman_sky@gmail.com",
+  "phone" : "0900349845",
+  "dateOfBirth" : "1982-11-14T16:59:59.999Z",
+  "interests": [
 	"Tennis",
     "Volley ball",
     "Basket ball"
   ],
-  "Skills": [
+  "skills": [
     {
       "Skill": "Writing fast",
       "Hirable": true
     }
   ],
-  "Settings": {
-    "UserId": "002",
-    "Language": "France",
-    "DateFormat": "dd-mm-yyyy",
-	"DateTimeFormat" : "dd-mm-yyyy:hh:mm",
-    "TimeFormat": "hh:mm",
-    "Notification": true
+  "settings": {
+    "userId": "002",
+    "language": "France",
+    "dateFormat": "dd-mm-yyyy",
+    "dateTimeFormat" : "dd-mm-yyyy:hh:mm",
+    "timeFormat": "hh:mm",
+    "notification": true
   }
 }
 ```
@@ -166,38 +166,33 @@ PUT /users/wolverine
 ```
 ```json
 {
-  "Id": "001",
-  "Username": "james.howlett"",
-  "Password": "12345678",
-  "Email": "james.howlett@gmail.com",
-  "Phone": "0987654321",
-  "DateOfBirth": "1974-11-16T16:59:59.999Z",
-  "Interests": [
+  "id": "001",
+  "username": "Radhika",
+  "password": "12345678",
+  "email": "radhika_sharma.123@gmail.com",
+  "phone": "0900012345",
+  "dateOfBirth": "1974-11-16T16:59:59.999Z",
+  "interests": [
     "Play game",
     "Foot ball",
     "Basket ball"
   ],
-   "Skills": [
+   "skills": [
     {
-      "Skill": "Writing fast",
-      "Hirable": true
+      "skill": "Writing fast",
+      "hirable": true
     }
   ],
-  "Settings": {
-    "UserId": "001",
-    "Language": "English",
-    "DateFormat": "dd/mm/yyyy",
-	"DateTimeFormat" : "dd-mm-yyyy:hh:mm",
-    "TimeFormat": "hh:mm:ss",
-    "Notification": true
+  "settings": {
+    "userId": "001",
+    "language": "English",
+    "dateformat": "dd/mm/yyyy",
+    "datetimeformat" : "dd-mm-yyyy:hh:mm",
+    "timeformat": "hh:mm:ss",
+    "notification": true
   }
 }
-{
-    "username": "james.howlett",
-    "email": "james.howlett@gmail.com",
-    "phone": "0987654321",
-    "dateOfBirth": "1974-11-16T16:59:59.999Z"
-}```
+```
 #### *Response:* 1: success, 0: not found, -1: error
 ```json
 1
