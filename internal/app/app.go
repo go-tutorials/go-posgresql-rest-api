@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/core-go/health"
-	s "github.com/core-go/health"
+	s "github.com/core-go/health/sql"
 	_ "github.com/lib/pq"
 
 	"go-service/internal/handlers"
@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	CreateDatabase =`CREATE if not exists DATABASE mydb
+	CreateDatabase = `CREATE if not exists DATABASE mydb
 WITH
 OWNER = postgres
 ENCODING = 'UTF8'
@@ -68,10 +68,8 @@ func NewApp(context context.Context, conf DatabaseConfig) (*ApplicationContext, 
 	userService := services.NewUserService(db)
 	userHandler := handlers.NewUserHandler(userService)
 
-	sqlChecker := s.NewSqlHealthChecker(db)
-	var checkers []health.HealthChecker
-	checkers = []health.HealthChecker{sqlChecker}
-	healthHandler := health.NewHealthHandler(checkers)
+	sqlChecker := s.NewHealthChecker(db)
+	healthHandler := health.NewHealthHandler(sqlChecker)
 
 	return &ApplicationContext{
 		HealthHandler: healthHandler,
