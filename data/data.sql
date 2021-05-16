@@ -4,6 +4,9 @@ create table if not exists users (
   email varchar(120),
   phone varchar(45),
   date_of_birth date,
+  interests varchar[],
+  skills jsonb,
+  settings json,
   primary key (id)
 );
 
