@@ -26,14 +26,14 @@ const (
 	CreateTable = `
 create table if not exists users (
   id varchar(40) not null,
-  username varchar(120),
-  email varchar(120),
-  phone varchar(45),
-  date_of_birth date,
-  interests varchar[],
-  skills jsonb,
-  settings json,
-  primary key (id)
+    username varchar(120),
+    email varchar(120),
+    phone varchar(45),
+    date_of_birth timestamp with time zone,
+    interests varchar[],
+    skills json[],
+    settings json,
+    primary key (id)
 )`
 )
 

@@ -1,13 +1,13 @@
 create table if not exists users (
-  id varchar(40) not null,
-  username varchar(120),
-  email varchar(120),
-  phone varchar(45),
-  date_of_birth date,
-  interests varchar[],
-  skills jsonb,
-  settings json,
-  primary key (id)
+    id varchar(40) not null,
+    username varchar(120),
+    email varchar(120),
+    phone varchar(45),
+    date_of_birth timestamp with time zone,
+    interests varchar[],
+    skills json[],
+    settings json,
+    primary key (id)
 );
 
 insert into users (id, username, email, phone, date_of_birth, interests, skills, settings) values ('001','ironman', 'tony.stark@gmail.com', '0987654321', '1963-03-25T16:59:59Z', '{"Play game","Foot ball","Basket ball"}', '[{"skill":"Writing fast","hirable":true}]'', ''{"userid":"001","language":"English","dateFormat":"dd/mm/yyyy","dateTimeFormat":"dd-mm-yyyy:hh:mm","timeFormat":"hh:mm:ss","notification":true}')  RETURNING id;
