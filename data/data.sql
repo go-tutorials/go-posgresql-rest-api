@@ -6,6 +6,7 @@ create table if not exists users (
     date_of_birth timestamp with time zone,
     interests varchar[],
     skills json[],
+    achievements json[],
     settings json,
     primary key (id)
 );
