@@ -4,7 +4,7 @@ server:
 
 sql:
   driver: postgres
-  data_source_name: user=postgres password=postgres dbname=masterdata sslmode=disable
+  data_source_name: postgres://mkwgzgli:si8QgTnTNbSlPf8FU7wNmGYF-TK2zH9h@satao.db.elephantsql.com/mkwgzgli
 log:
   level: info
   duration: duration
