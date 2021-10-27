@@ -4,87 +4,72 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"time"
 )
 
 type User struct {
-	Id           string        `mapstructure:"id" json:"id" gorm:"column:id;primary_key" bson:"_id" dynamodbav:"id,omitempty" firestore:"id,omitempty" validate:"required,max=40"`
-	Username     string        `mapstructure:"username" json:"username,omitempty" gorm:"column:username" bson:"username,omitempty" dynamodbav:"username,omitempty" firestore:"username,omitempty" validate:"required,username,max=100"`
-	Email        string        `mapstructure:"email" json:"email,omitempty" gorm:"column:email" bson:"email3,omitempty" dynamodbav:"email,omitempty" firestore:"email,omitempty" validate:"email,max=100"`
-	Phone        string        `mapstructure:"phone" json:"phone,omitempty" gorm:"column:phone" bson:"phone,omitempty" dynamodbav:"phone,omitempty" firestore:"required,phone,omitempty" validate:"required,phone,max=18"`
-	DateOfBirth  *time.Time    `mapstructure:"date_of_birth" json:"dateOfBirth,omitempty" gorm:"column:dateofbirth" bson:"dateOfBirth,omitempty" dynamodbav:"dateOfBirth,omitempty" firestore:"dateOfBirth,omitempty"`
-	Interests    []string      `mapstructure:"interests" json:"interests,omitempty" gorm:"column:interests" bson:"interests,omitempty" dynamodbav:"interests,omitempty" firestore:"interests,omitempty"`
-	Skills       []SkillItem   `mapstructure:"skills" json:"skills,omitempty" gorm:"column:skills" bson:"skills,omitempty" dynamodbav:"skills,omitempty" firestore:"skills,omitempty"`
-	Achievements []Achievement `mapstructure:"achievements" json:"achievements,omitempty" gorm:"column:achievements" bson:"achievements,omitempty" dynamodbav:"achievements,omitempty" firestore:"achievements,omitempty"`
-	Settings     *UserSettings `mapstructure:"settings" json:"settings,omitempty" gorm:"type:settings;column:settings" bson:"settings,omitempty" dynamodbav:"settings,omitempty" firestore:"settings,omitempty"`
+	Id          string     		`json:"id,omitempty" gorm:"column:id;primary_key" bson:"_id,omitempty" dynamodbav:"id,omitempty" firestore:"id,omitempty" validate:"required,max=40"`
+	Username    string     		`json:"username,omitempty" gorm:"column:username" bson:"username,omitempty" dynamodbav:"username,omitempty" firestore:"username,omitempty" validate:"required,username,max=100"`
+	Email       string     		`json:"email,omitempty" gorm:"column:email" bson:"emai,omitemptyl" dynamodbav:"email,omitempty" firestore:"email,omitempty" validate:"email,max=100"`
+	Phone       string     		`json:"phone,omitempty" gorm:"column:phone" bson:"phone,omitempty" dynamodbav:"phone,omitempty" firestore:"phone,omitempty" validate:"required,phone,max=18"`
+	DateOfBirth *time.Time 		`json:"dateOfBirth,omitempty" gorm:"column:date_of_birth" bson:"dateOfBirth,omitempty" dynamodbav:"dateOfBirth,omitempty" firestore:"dateOfBirth,omitempty"`
+	Interests 	[]string 		`json:"interests,omitempty" gorm:"column:interests" bson:"interests,omitempty" dynamodbav:"interests,omitempty" firestore:"interests,omitempty" validate:""`
+	Skills 		[]Skills		`json:"skills,omitempty" gorm:"column:skills" bson:"skills,omitempty" dynamodbav:"skills,omitempty" firestore:"skills,omitempty" validate:""`
+	Achievements []Achievement	`json:"achievements,omitempty" gorm:"column:achievements" bson:"achievements,omitempty" dynamodbav:"achievements,omitempty" firestore:"achievements,omitempty" validate:""`
+	Settings	*Settings		`json:"settings,omitempty" gorm:"column:settings" bson:"settings,omitempty" dynamodbav:"settings,omitempty" firestore:"settings,omitempty" validate:""`
+}
+
+type Skills struct {
+	Skill 		string			`json:"skill,omitempty" gorm:"column:skill" bson:"skill,omitempty" dynamodbav:"skill,omitempty" firestore:"skill,omitempty" validate:"required"`
+	Hirable 	bool			`json:"hirable,omitempty" gorm:"column:hirable" bson:"hirable,omitempty" dynamodbav:"hirable,omitempty" firestore:"hirable,omitempty" validate:""`
+}
+
+func (c Skills) Value() (driver.Value, error) {
+	return json.Marshal(c)
+}
+
+func (c *Skills) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(b, &c)
 }
 
 type Achievement struct {
-	Subject     string `mapstructure:"subject" gorm:"column:subject" json:"subject,omitempty" gorm:"subject" bson:"subject,omitempty" dynamodbav:"subject,omitempty" firestore:"subject,omitempty"`
-	Description string `mapstructure:"description" gorm:"column:description" json:"description,omitempty" gorm:"description" bson:"description,omitempty" dynamodbav:"description,omitempty" firestore:"description,omitempty"`
+	Subject     string			`json:"subject,omitempty" gorm:"column:subject" bson:"subject,omitempty" dynamodbav:"subject,omitempty" firestore:"subject,omitempty" validate:""`
+	Description string			`json:"description,omitempty" gorm:"column:description" bson:"description,omitempty" dynamodbav:"description,omitempty" firestore:"description,omitempty" validate:""`
 }
 
-func (a Achievement) Value() (driver.Value, error) {
-	b, err := json.Marshal(a)
-	return string(b), err
+func (c Achievement) Value() (driver.Value, error) {
+	return json.Marshal(c)
 }
 
-func (o *Achievement) Scan(value interface{}) error {
+func (c *Achievement) Scan(value interface{}) error {
 	b, ok := value.([]byte)
 	if !ok {
 		return errors.New("type assertion to []byte failed")
 	}
-	return json.Unmarshal(b, &o)
+	return json.Unmarshal(b, &c)
 }
 
-type UserSettings struct {
-	UserId         string `mapstructure:"id" json:"-" gorm:"column:id" bson:"-" dynamodbav:"-" firestore:"-"`
-	Language       string `mapstructure:"language" json:"language,omitempty" gorm:"column:language" bson:"language,omitempty" dynamodbav:"id,omitempty" firestore:"id,omitempty"`
-	DateFormat     string `mapstructure:"date_format" json:"dateFormat,omitempty" gorm:"column:dateformat" bson:"dateFormat,omitempty" dynamodbav:"dateFormat,omitempty" firestore:"dateFormat,omitempty"`
-	DateTimeFormat string `mapstructure:"date_time_format" json:"dateTimeFormat,omitempty" gorm:"column:datetimeformat,omitempty" bson:"dateTimeFormat,omitempty" dynamodbav:"dateTimeFormat,omitempty" firestore:"dateTimeFormat,omitempty"`
-	TimeFormat     string `mapstructure:"time_format" json:"timeFormat,omitempty" gorm:"column:timeformat" bson:"timeFormat,omitempty" dynamodbav:"timeFormat,omitempty" firestore:"timeFormat,omitempty"`
-	Notification   bool   `mapstructure:"notification" json:"notification,omitempty" gorm:"column:notification" bson:"notification,omitempty" dynamodbav:"notification,omitempty" firestore:"notification,omitempty"`
+type Settings struct {
+	UserId 			string		`json:"userId,omitempty" gorm:"column:userId" bson:"userId,omitempty" dynamodbav:"userId,omitempty" firestore:"userId,omitempty" validate:""`
+	Language 		string		`json:"language,omitempty" gorm:"column:language" bson:"language,omitempty" dynamodbav:"language,omitempty" firestore:"language,omitempty" validate:""`
+	DateFormat 		string		`json:"dateFormat,omitempty" gorm:"column:dateFormat" bson:"dateFormat,omitempty" dynamodbav:"dateFormat,omitempty" firestore:"dateFormat,omitempty" validate:""`
+	DateTimeFormat 	string		`json:"dateTimeFormat,omitempty" gorm:"column:dateTimeFormat" bson:"dateTimeFormat,omitempty" dynamodbav:"dateTimeFormat,omitempty" firestore:"dateTimeFormat,omitempty" validate:""`
+	TimeFormat 		string		`json:"timeFormat,omitempty" gorm:"column:timeFormat" bson:"timeFormat,omitempty" dynamodbav:"timeFormat,omitempty" firestore:"timeFormat,omitempty" validate:""`
+	Notification 	bool		`json:"notification,omitempty" gorm:"column:notification" bson:"notification,omitempty" dynamodbav:"notification,omitempty" firestore:"notification,omitempty" validate:""`
 }
 
-func (u UserSettings) Value() (driver.Value, error) {
-	b, err := json.Marshal(u)
-	return string(b), err
+func (c Settings) Value() (driver.Value, error) {
+	return json.Marshal(c)
 }
 
-func (u *UserSettings) Scan(input interface{}) error {
-	bytes, ok := input.([]byte)
-	fmt.Println("This is in scan progress")
-	if !ok {
-		return errors.New(fmt.Sprint("Failed to unmarshal JSONB value:", input))
-	}
-	return json.Unmarshal(bytes, &u)
-}
-
-type SkillItem struct {
-	Skill   string `mapstructure:"skill" json:"skill,omitempty" gorm:"column:skill" bson:"skill,omitempty" dynamodbav:"skill,omitempty" firestore:"skill,omitempty"`
-	Hirable bool   `mapstructure:"hirable" json:"hirable,omitempty" gorm:"column:hirable" bson:"hirable,omitempty" dynamodbav:"hirable,omitempty" firestore:"hirable,omitempty"`
-}
-
-func (o SkillItem) Value() (driver.Value, error) {
-	b, err := json.Marshal(o)
-	return string(b), err
-}
-
-func (o *SkillItem) Scan(value interface{}) error {
+func (c *Settings) Scan(value interface{}) error {
 	b, ok := value.([]byte)
 	if !ok {
 		return errors.New("type assertion to []byte failed")
 	}
-	return json.Unmarshal(b, &o)
+	return json.Unmarshal(b, &c)
 }
-
-type Appreciation struct {
-	Id            string `mapstructure:"id" gorm:"column:id" json:"id,omitempty" gorm:"id" bson:"id,omitempty" dynamodbav:"id,omitempty" firestore:"id,omitempty"`
-	UserId        string `mapstructure:"user_id" gorm:"column:userId" json:"userId,omitempty" gorm:"userId" bson:"userId,omitempty" dynamodbav:"userId,omitempty" firestore:"userId,omitempty"`
-	Appreciator   string `mapstructure:"appreciator" gorm:"column:appreciator" json:"appreciator,omitempty" gorm:"appreciator" bson:"appreciator,omitempty" dynamodbav:"appreciator,omitempty" firestore:"appreciator,omitempty"`
-	AppreciatedAt string `mapstructure:"appreciated_at" gorm:"column:appreciatedAt" json:"appreciatedAt,omitempty" gorm:"appreciatedAt" bson:"appreciatedAt,omitempty" dynamodbav:"appreciatedAt,omitempty" firestore:"appreciatedAt,omitempty"`
-	Subject       string `mapstructure:"subject" gorm:"column:subject" json:"subject,omitempty" gorm:"subject" bson:"subject,omitempty" dynamodbav:"subject,omitempty" firestore:"subject,omitempty"`
-	Description   string `mapstructure:"description" gorm:"column:description" json:"description,omitempty" gorm:"description" bson:"description,omitempty" dynamodbav:"description,omitempty" firestore:"description,omitempty"`
-}
-

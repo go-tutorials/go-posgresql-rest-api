@@ -2,71 +2,47 @@ package app
 
 import (
 	"context"
-	"database/sql"
 	"github.com/core-go/health"
-	s "github.com/core-go/health/sql"
+	"github.com/core-go/log"
+	sv "github.com/core-go/service"
+	v "github.com/core-go/service/v10"
+	q "github.com/core-go/sql"
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
-	"go-service/internal/usecase/user"
-)
+	"reflect"
 
-const (
-	CreateDatabase = `CREATE if not exists DATABASE mydb
-WITH
-OWNER = postgres
-ENCODING = 'UTF8'
-LC_COLLATE = 'English_United States.1252'
-LC_CTYPE = 'English_United States.1252'
-TABLESPACE = pg_default
-CONNECTION LIMIT = -1`
-)
-
-const (
-	CreateTable = `
-create table if not exists users (
-  id varchar(40) not null,
-    username varchar(120),
-    email varchar(120),
-    phone varchar(45),
-    date_of_birth timestamp with time zone,
-    interests varchar[],
-    skills json[],
-    settings json,
-    primary key (id)
-)`
+	. "go-service/internal/usecase/user"
 )
 
 type ApplicationContext struct {
 	HealthHandler *health.Handler
-	UserHandler   *user.UserHandler
+	UserHandler   UserHandler
 }
 
-func NewApp(context context.Context, conf DatabaseConfig) (*ApplicationContext, error) {
-	db, err := sql.Open(conf.Driver, conf.DataSourceName)
+func NewApp(ctx context.Context, root Root) (*ApplicationContext, error) {
+	db, err := q.OpenByConfig(root.Sql)
 	if err != nil {
 		return nil, err
 	}
+	logError := log.ErrorMsg
+	status := sv.InitializeStatus(root.Status)
+	action := sv.InitializeAction(root.Action)
+	validator := v.NewValidator()
 
-	/*fmt.Sprintf("%s", "create database if not exists mydb")
-	_, err = db.ExecContext(context, CreateDatabase)
+	userType := reflect.TypeOf(User{})
+	//userQueryBuilder := query.NewBuilder(db, "users", userType)
+	userSearchBuilder, err := q.NewSearchBuilderWithArray(db, userType, BuildQuery, pq.Array)
 	if err != nil {
 		return nil, err
 	}
-
-	stmtUseDB := fmt.Sprintf("%s", "use masterdata")
-	_, err = db.ExecContext(context, stmtUseDB)
-	if err != nil {
-		return nil, err
-	}*/
-
-	_, err = db.ExecContext(context, CreateTable)
+	userRepository, err := q.NewRepositoryWithArray(db, "users", userType, pq.Array)
 	if err != nil {
 		return nil, err
 	}
+	userService := NewUserService(userRepository)
+	userHandler := NewUserHandler(userSearchBuilder.Search, userService, status, logError, validator.Validate, &action)
 
-	userService := user.NewUserService(db)
-	userHandler := user.NewUserHandler(userService)
-
-	sqlChecker := s.NewHealthChecker(db)
+	sqlChecker := q.NewHealthChecker(db)
 	healthHandler := health.NewHandler(sqlChecker)
 
 	return &ApplicationContext{

@@ -2,7 +2,7 @@ server:
   name: go-sql-rest-api
   port: 8080
 
-db:
+sql:
   driver: postgres
   data_source_name: user=postgres password=postgres dbname=masterdata sslmode=disable
 log:

@@ -2,18 +2,12 @@ package app
 
 import (
 	"context"
+	. "github.com/core-go/service"
 	"github.com/gorilla/mux"
 )
 
-const (
-	GET    = "GET"
-	POST   = "POST"
-	PUT    = "PUT"
-	DELETE = "DELETE"
-)
-
-func Route(r *mux.Router, ctx context.Context, dbConfig DatabaseConfig) error {
-	app, err := NewApp(ctx, dbConfig)
+func Route(r *mux.Router, ctx context.Context, root Root) error {
+	app, err := NewApp(ctx, root)
 	if err != nil {
 		return err
 	}
@@ -21,10 +15,12 @@ func Route(r *mux.Router, ctx context.Context, dbConfig DatabaseConfig) error {
 	r.HandleFunc("/health", app.HealthHandler.Check).Methods(GET)
 
 	userPath := "/users"
-	r.HandleFunc(userPath, app.UserHandler.GetAll).Methods(GET)
+	r.HandleFunc(userPath, app.UserHandler.Search).Methods(GET)
+	r.HandleFunc(userPath+"/search", app.UserHandler.Search).Methods(GET, POST)
 	r.HandleFunc(userPath+"/{id}", app.UserHandler.Load).Methods(GET)
-	r.HandleFunc(userPath, app.UserHandler.Insert).Methods(POST)
+	r.HandleFunc(userPath, app.UserHandler.Create).Methods(POST)
 	r.HandleFunc(userPath+"/{id}", app.UserHandler.Update).Methods(PUT)
+	r.HandleFunc(userPath+"/{id}", app.UserHandler.Patch).Methods(PATCH)
 	r.HandleFunc(userPath+"/{id}", app.UserHandler.Delete).Methods(DELETE)
 
 	return nil
