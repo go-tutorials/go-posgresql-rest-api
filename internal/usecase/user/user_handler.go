@@ -1,12 +1,9 @@
-package handlers
+package user
 
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-
-	. "go-service/internal/models"
-	. "go-service/internal/services"
 )
 
 type UserHandler struct {

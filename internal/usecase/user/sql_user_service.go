@@ -1,11 +1,10 @@
-package services
+package user
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
 	"github.com/lib/pq"
-	. "go-service/internal/models"
 	"log"
 	"strings"
 )
