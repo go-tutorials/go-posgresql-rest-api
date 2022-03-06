@@ -14,18 +14,50 @@ func BuildQuery(filter interface{}) (query string, params []interface{}) {
 
 	i := 1
 	if s.Interests != nil && len(s.Interests) > 0  {
-		params = append(params, pq.Array(s.Interests))
 		where = append(where, fmt.Sprintf(`interests && %s`, q.BuildDollarParam(i)))
+		params = append(params, pq.Array(s.Interests))
 		i++
 	}
 	if s.Skills != nil  && len(s.Skills) > 0 {
 		var skills []string
 		for _, value := range s.Skills {
-			params = append(params, value)
 			skills = append(skills, fmt.Sprintf(`%s <@ ANY(skills)`, q.BuildDollarParam(i)))
-			i ++
+			params = append(params, value)
+			i++
 		}
 		where = append(where, fmt.Sprintf(`(%s)`, strings.Join(skills, " or ")))
+	}
+	if s.DateOfBirth != nil {
+		if s.DateOfBirth.Min != nil {
+			where = append(where, fmt.Sprintf(`date_of_birth >= %s`, q.BuildDollarParam(i)))
+			params = append(params, s.DateOfBirth.Min)
+			i++
+		}
+		if s.DateOfBirth.Max != nil {
+			where = append(where, fmt.Sprintf(`date_of_birth <= %s`, q.BuildDollarParam(i)))
+			params = append(params, s.DateOfBirth.Max)
+			i++
+		}
+	}
+	if len(s.Id) > 0 {
+		where = append(where, fmt.Sprintf(`id = %s`, q.BuildDollarParam(i)))
+		params = append(params, s.Id)
+		i++
+	}
+	if len(s.Username) > 0 {
+		where = append(where, fmt.Sprintf(`username ilike %s`, q.BuildDollarParam(i)))
+		params = append(params, "%" + s.Username + "%")
+		i++
+	}
+	if len(s.Email) > 0 {
+		where = append(where, fmt.Sprintf(`email ilike %s`, q.BuildDollarParam(i)))
+		params = append(params, s.Email + "%")
+		i++
+	}
+	if len(s.Phone) > 0 {
+		where = append(where, fmt.Sprintf(`phone ilike %s`, q.BuildDollarParam(i)))
+		params = append(params, "%" + s.Phone + "%")
+		i++
 	}
 	if s.Settings != nil {
 		params = append(params, s.Settings)
