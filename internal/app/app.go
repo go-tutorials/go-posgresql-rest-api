@@ -4,11 +4,12 @@ import (
 	"context"
 	"github.com/core-go/health"
 	"github.com/core-go/log"
+	"github.com/core-go/search/convert"
 	sv "github.com/core-go/service"
 	v "github.com/core-go/service/v10"
 	q "github.com/core-go/sql"
+	"github.com/core-go/sql/template"
 	"github.com/lib/pq"
-	_ "github.com/lib/pq"
 	"reflect"
 
 	. "go-service/internal/usecase/user"
@@ -19,19 +20,26 @@ type ApplicationContext struct {
 	UserHandler   UserHandler
 }
 
-func NewApp(ctx context.Context, root Config) (*ApplicationContext, error) {
-	db, err := q.OpenByConfig(root.Sql)
+func NewApp(ctx context.Context, conf Config) (*ApplicationContext, error) {
+	db, err := q.OpenByConfig(conf.Sql)
 	if err != nil {
 		return nil, err
 	}
 	logError := log.ErrorMsg
-	status := sv.InitializeStatus(root.Status)
-	action := sv.InitializeAction(root.Action)
+	status := sv.InitializeStatus(conf.Status)
+	action := sv.InitializeAction(conf.Action)
 	validator := v.NewValidator()
+
+	buildParam := q.GetBuild(db)
+	templates, err := template.LoadTemplates(template.Trim, "configs/query.xml")
+	if err != nil {
+		return nil, err
+	}
 
 	userType := reflect.TypeOf(User{})
 	//userQueryBuilder := query.NewBuilder(db, "users", userType)
-	userSearchBuilder, err := q.NewSearchBuilderWithArray(db, userType, BuildQuery, pq.Array)
+	queryUser, err := template.UseQueryWithArray(conf.Template, BuildQuery, "user", templates, &userType, convert.ToMap, buildParam, pq.Array)
+	userSearchBuilder, err := q.NewSearchBuilderWithArray(db, userType, queryUser, pq.Array)
 	if err != nil {
 		return nil, err
 	}

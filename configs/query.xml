@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mappers">
+  <select id="user">
+    select *
+    from users
+    where
+    <if test="id != null">
+      id in (#{id}) and
+    </if>
+    <if test="interests != null" array="skip">
+      interests && #{interests} and
+    </if>
+    <if test="skills != null" separator=" or " prefix="(" suffix=") and ">
+      #{skills} <@ ANY(skills)
+    </if>
+    <if test="dateOfBirth.min != null">
+      date_of_birth >= #{dateOfBirth.min} and
+    </if>
+    <if test="dateOfBirth.max != null">
+      date_of_birth <= #{dateOfBirth.max} and
+    </if>
+    <if test="username != null">
+      username ilike #{username} and
+    </if>
+    <if test="email != null">
+      email ilike #{email} and
+    </if>
+    <if test="phone != null">
+      phone ilike #{phone} and
+    </if>
+    <if test="status != null">
+      status in (#{status}) and
+    </if>
+    <if test="q != null">
+      (username ilike #{q} or email ilike #{q}) and
+    </if>
+    1 = 1
+    <if test="sort != null">
+      order by {sort}
+    </if>
+  </select>
+</mapper>

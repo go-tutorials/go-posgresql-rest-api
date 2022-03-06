@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	Server     sv.ServerConf    `mapstructure:"server"`
+	Template   bool             `mapstructure:"template"`
 	Sql        sql.Config       `mapstructure:"sql"`
 	Log        log.Config       `mapstructure:"log"`
 	MiddleWare mid.LogConfig    `mapstructure:"middleware"`

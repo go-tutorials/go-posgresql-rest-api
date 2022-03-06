@@ -1,10 +1,11 @@
 server:
   name: go-posgresql-tutorial
   port: 8080
+template: true
 
 sql:
   driver: postgres
-  data_source_name: postgres://mkwgzgli:si8QgTnTNbSlPf8FU7wNmGYF-TK2zH9h@satao.db.elephantsql.com/mkwgzgli
+  data_source_name: host=localhost port=5432 user=postgres dbname=masterdata2 sslmode=disable password=abcd1234
 log:
   level: info
   duration: duration
