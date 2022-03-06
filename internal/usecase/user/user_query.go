@@ -2,50 +2,47 @@ package user
 
 import (
 	"fmt"
+	q "github.com/core-go/sql"
 	"github.com/lib/pq"
 	"strings"
 )
 
-func BuildQuery (sm interface{}) (str string, param []interface{}) {
-	str = `select * from users`
-	u := sm.(*UserFilter)
+func BuildQuery(filter interface{}) (query string, params []interface{}) {
+	query = `select * from users`
+	s := filter.(*UserFilter)
 	var where []string
 
 	i := 1
-	if u.Interests != nil && len(u.Interests) > 0  {
-		param = append(param, pq.Array(u.Interests))
-		where = append(where, fmt.Sprintf(` interests && $%d`, i))
+	if s.Interests != nil && len(s.Interests) > 0  {
+		params = append(params, pq.Array(s.Interests))
+		where = append(where, fmt.Sprintf(`interests && %s`, q.BuildDollarParam(i)))
 		i++
 	}
-	if u.Skills != nil  && len(u.Skills) > 0 {
+	if s.Skills != nil  && len(s.Skills) > 0 {
 		var skills []string
-		for _, value := range u.Skills {
-			param = append(param, value)
-			skills = append(skills, fmt.Sprintf(` $%d <@ ANY(skills)`, i))
+		for _, value := range s.Skills {
+			params = append(params, value)
+			skills = append(skills, fmt.Sprintf(`%s <@ ANY(skills)`, q.BuildDollarParam(i)))
 			i ++
 		}
-		where = append(where, fmt.Sprintf(`(%s)`, strings.Join(skills, " or")))
+		where = append(where, fmt.Sprintf(`(%s)`, strings.Join(skills, " or ")))
 	}
-	if u.Settings != nil {
-		param = append(param, u.Settings)
-		where = append(where, fmt.Sprintf(` settings && $%d`, i))
+	if s.Settings != nil {
+		params = append(params, s.Settings)
+		where = append(where, fmt.Sprintf(`settings && %s`, q.BuildDollarParam(i)))
 		i++
 	}
-	if u.Achievements != nil && len(u.Achievements) > 0 {
+	if s.Achievements != nil && len(s.Achievements) > 0 {
 		var achievements []string
-		for _, value := range u.Achievements {
-			param = append(param, value)
-			achievements = append(achievements, fmt.Sprintf(` $%d <@ ANY(achievements)`,i))
+		for _, value := range s.Achievements {
+			params = append(params, value)
+			achievements = append(achievements, fmt.Sprintf(`%s <@ ANY(achievements)`, q.BuildDollarParam(i)))
 			i++
 		}
-		where = append(where, fmt.Sprintf(`(%s)`, strings.Join(achievements, " or")))
+		where = append(where, fmt.Sprintf(`(%s)`, strings.Join(achievements, " or ")))
 	}
-
 	if len(where) > 0 {
-		str = str + ` where` + fmt.Sprintf(` %s`, strings.Join(where, " and"))
+		query = query + ` where ` + strings.Join(where, " and ")
 	}
-
-	fmt.Println(str)
-	fmt.Println(param)
 	return
 }

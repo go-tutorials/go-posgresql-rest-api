@@ -8,13 +8,11 @@ import (
 	mid "github.com/core-go/log/middleware"
 	sv "github.com/core-go/service"
 	"github.com/gorilla/mux"
-	"net/http"
-
 	"go-service/internal/app"
 )
 
 func main() {
-	var conf app.Root
+	var conf app.Config
 	er1 := config.Load(&conf, "configs/config")
 	if er1 != nil {
 		panic(er1)
@@ -35,7 +33,8 @@ func main() {
 		panic(er2)
 	}
 	fmt.Println(sv.ServerInfo(conf.Server))
-	if er3 := http.ListenAndServe(sv.Addr(conf.Server.Port), r); er3 != nil {
+	server := sv.CreateServer(conf.Server, r)
+	if er3 := server.ListenAndServe(); er3 != nil {
 		fmt.Println(er3.Error())
 	}
 }

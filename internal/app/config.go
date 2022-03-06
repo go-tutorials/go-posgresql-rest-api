@@ -7,7 +7,7 @@ import (
 	"github.com/core-go/sql"
 )
 
-type Root struct {
+type Config struct {
 	Server     sv.ServerConf    `mapstructure:"server"`
 	Sql        sql.Config       `mapstructure:"sql"`
 	Log        log.Config       `mapstructure:"log"`

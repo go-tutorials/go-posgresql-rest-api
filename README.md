@@ -1,12 +1,6 @@
-# go-sql-rest-api
+# go-posgresql-tutorial
 
 ## How to run
-#### Clone the repository
-```shell
-git clone https://github.com/go-tutorials/go-sql-rest-api.git
-cd go-sql-rest-api
-```
-
 #### To run the application
 ```shell
 go run main.go
@@ -286,7 +280,7 @@ func main() {
 
     log.Initialize(conf.Log)
     r.Use(m.BuildContext)
-    logger := m.NewStructuredLogger()
+    logger := m.NewLogger()
     r.Use(m.Logger(conf.MiddleWare, log.InfoFields, logger))
     r.Use(m.Recover(log.ErrorMsg))
 }

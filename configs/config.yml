@@ -1,5 +1,5 @@
 server:
-  name: go-sql-rest-api
+  name: go-posgresql-tutorial
   port: 8080
 
 sql:
