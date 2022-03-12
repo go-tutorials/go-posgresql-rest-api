@@ -16,8 +16,8 @@ import (
 )
 
 type ApplicationContext struct {
-	HealthHandler *health.Handler
-	UserHandler   UserHandler
+	Health *health.Handler
+	User   UserHandler
 }
 
 func NewApp(ctx context.Context, conf Config) (*ApplicationContext, error) {
@@ -37,7 +37,6 @@ func NewApp(ctx context.Context, conf Config) (*ApplicationContext, error) {
 	}
 
 	userType := reflect.TypeOf(User{})
-	//userQueryBuilder := query.NewBuilder(db, "users", userType)
 	queryUser, err := template.UseQueryWithArray(conf.Template, BuildQuery, "user", templates, &userType, convert.ToMap, buildParam, pq.Array)
 	userSearchBuilder, err := q.NewSearchBuilderWithArray(db, userType, queryUser, pq.Array)
 	if err != nil {
@@ -54,7 +53,7 @@ func NewApp(ctx context.Context, conf Config) (*ApplicationContext, error) {
 	healthHandler := health.NewHandler(sqlChecker)
 
 	return &ApplicationContext{
-		HealthHandler: healthHandler,
-		UserHandler:   userHandler,
+		Health: healthHandler,
+		User:   userHandler,
 	}, nil
 }
