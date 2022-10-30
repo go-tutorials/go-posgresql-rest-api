@@ -5,7 +5,7 @@ template: true
 
 sql:
   driver: postgres
-  data_source_name: host=localhost port=5432 user=postgres dbname=masterdata2 sslmode=disable password=abcd1234
+  data_source_name: postgres://mkwgzgli:si8QgTnTNbSlPf8FU7wNmGYF-TK2zH9h@satao.db.elephantsql.com/mkwgzgli
 log:
   level: info
   duration: duration

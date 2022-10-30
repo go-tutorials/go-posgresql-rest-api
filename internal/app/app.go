@@ -2,11 +2,11 @@ package app
 
 import (
 	"context"
+	sv "github.com/core-go/core"
+	v "github.com/core-go/core/v10"
 	"github.com/core-go/health"
 	"github.com/core-go/log"
 	"github.com/core-go/search/convert"
-	sv "github.com/core-go/service"
-	v "github.com/core-go/service/v10"
 	q "github.com/core-go/sql"
 	"github.com/core-go/sql/template"
 	"github.com/lib/pq"
@@ -25,7 +25,7 @@ func NewApp(ctx context.Context, conf Config) (*ApplicationContext, error) {
 	if err != nil {
 		return nil, err
 	}
-	logError := log.ErrorMsg
+	logError := log.LogError
 	status := sv.InitializeStatus(conf.Status)
 	action := sv.InitializeAction(conf.Action)
 	validator := v.NewValidator()
