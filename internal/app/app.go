@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	sv "github.com/core-go/core"
+	core "github.com/core-go/core"
 	v "github.com/core-go/core/v10"
 	"github.com/core-go/health"
 	"github.com/core-go/log"
@@ -12,12 +12,12 @@ import (
 	"github.com/lib/pq"
 	"reflect"
 
-	. "go-service/internal/usecase/user"
+	"go-service/internal/user"
 )
 
 type ApplicationContext struct {
 	Health *health.Handler
-	User   UserHandler
+	User   user.UserHandler
 }
 
 func NewApp(ctx context.Context, conf Config) (*ApplicationContext, error) {
@@ -26,8 +26,8 @@ func NewApp(ctx context.Context, conf Config) (*ApplicationContext, error) {
 		return nil, err
 	}
 	logError := log.LogError
-	status := sv.InitializeStatus(conf.Status)
-	action := sv.InitializeAction(conf.Action)
+	status := core.InitializeStatus(conf.Status)
+	action := core.InitializeAction(conf.Action)
 	validator := v.NewValidator()
 
 	buildParam := q.GetBuild(db)
@@ -36,8 +36,8 @@ func NewApp(ctx context.Context, conf Config) (*ApplicationContext, error) {
 		return nil, err
 	}
 
-	userType := reflect.TypeOf(User{})
-	queryUser, err := template.UseQueryWithArray(conf.Template, BuildQuery, "user", templates, &userType, convert.ToMap, buildParam, pq.Array)
+	userType := reflect.TypeOf(user.User{})
+	queryUser, err := template.UseQueryWithArray(conf.Template, user.BuildQuery, "user", templates, &userType, convert.ToMap, buildParam, pq.Array)
 	userSearchBuilder, err := q.NewSearchBuilderWithArray(db, userType, queryUser, pq.Array)
 	if err != nil {
 		return nil, err
@@ -46,8 +46,8 @@ func NewApp(ctx context.Context, conf Config) (*ApplicationContext, error) {
 	if err != nil {
 		return nil, err
 	}
-	userService := NewUserService(userRepository)
-	userHandler := NewUserHandler(userSearchBuilder.Search, userService, status, logError, validator.Validate, &action)
+	userService := user.NewUserService(userRepository)
+	userHandler := user.NewUserHandler(userSearchBuilder.Search, userService, status, logError, validator.Validate, &action)
 
 	sqlChecker := q.NewHealthChecker(db)
 	healthHandler := health.NewHandler(sqlChecker)
