@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	core "github.com/core-go/core"
+	"github.com/core-go/core"
 	v "github.com/core-go/core/v10"
 	"github.com/core-go/health"
 	"github.com/core-go/log"
